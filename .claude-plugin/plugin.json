@@ -1,0 +1,13 @@
+{
+  "name": "tili",
+  "displayName": "TILI",
+  "version": "1.0.0",
+  "description": "The AI that runs your advertising \u2014 Brand OS, Meta campaigns, and MCP tools.",
+  "author": {
+    "name": "TILI",
+    "url": "https://tili.global"
+  },
+  "homepage": "https://tili.global",
+  "repository": "https://github.com/treebs-technology/tili-plugin",
+  "license": "proprietary"
+}

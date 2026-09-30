@@ -1,0 +1,14 @@
+interface:
+  display_name: 'Campaign Assets Plan'
+  short_description: 'Produce the CampaignAssets plan (copy, visual direction, image prompts + references) for G_ASSETS'
+  default_prompt: 'Draft the campaign assets plan.'
+policy:
+  allow_implicit_invocation: true
+
+dependencies:
+  tools:
+    - type: mcp
+      value: tili
+      description: tili MCP gateway (Brand OS + Meta campaign tools)
+      transport: streamable_http
+      url: https://backend.tili.global/mcp

@@ -1,0 +1,14 @@
+interface:
+  display_name: 'Campaign Media Plan'
+  short_description: 'Draft MediaStrategy with providers.meta for G_MEDIA'
+  default_prompt: 'Draft the campaign media plan.'
+policy:
+  allow_implicit_invocation: true
+
+dependencies:
+  tools:
+    - type: mcp
+      value: tili
+      description: tili MCP gateway (Brand OS + Meta campaign tools)
+      transport: streamable_http
+      url: https://backend.tili.global/mcp

@@ -1,0 +1,14 @@
+interface:
+  display_name: 'Campaign Strategy'
+  short_description: 'Draft messaging CampaignStrategy for G_STRATEGY'
+  default_prompt: 'Draft the campaign strategy.'
+policy:
+  allow_implicit_invocation: true
+
+dependencies:
+  tools:
+    - type: mcp
+      value: tili
+      description: tili MCP gateway (Brand OS + Meta campaign tools)
+      transport: streamable_http
+      url: https://backend.tili.global/mcp

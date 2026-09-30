@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "tili": {
+      "type": "http",
+      "url": "https://backend.tili.global/mcp"
+    }
+  }
+}

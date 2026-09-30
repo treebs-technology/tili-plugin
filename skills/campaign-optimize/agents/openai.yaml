@@ -1,0 +1,14 @@
+interface:
+  display_name: 'Campaign Optimize'
+  short_description: 'Post-publish reports and lifecycle suggestions'
+  default_prompt: 'Optimize a live campaign.'
+policy:
+  allow_implicit_invocation: true
+
+dependencies:
+  tools:
+    - type: mcp
+      value: tili
+      description: tili MCP gateway (Brand OS + Meta campaign tools)
+      transport: streamable_http
+      url: https://backend.tili.global/mcp

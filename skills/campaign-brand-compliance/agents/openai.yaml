@@ -1,0 +1,16 @@
+interface:
+  display_name: 'Campaign Brand Compliance'
+  short_description: 'Review before the advertiser sees a phase — Brand OS + approved earlier phases'
+  default_prompt: >-
+    Review one campaign phase (strategy, assets plan, finished images, or media plan) before the
+    advertiser sees it: score the phase checklist against Brand OS and the approved earlier phases
+    (get_campaign_artifacts); return BrandCompliance. Never save, propose, regenerate, or open a
+    human card.
+
+dependencies:
+  tools:
+    - type: mcp
+      value: tili
+      description: tili MCP gateway (Brand OS + Meta campaign tools)
+      transport: streamable_http
+      url: https://backend.tili.global/mcp

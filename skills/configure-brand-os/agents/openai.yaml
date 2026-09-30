@@ -1,0 +1,14 @@
+interface:
+  display_name: 'Configure Brand OS'
+  short_description: 'Draft and propose the workspace Brand OS from official sources'
+  default_prompt: 'Check Brand OS status and configure it for this workspace.'
+policy:
+  allow_implicit_invocation: true
+
+dependencies:
+  tools:
+    - type: mcp
+      value: tili
+      description: tili MCP gateway (Brand OS + Meta campaign tools)
+      transport: streamable_http
+      url: https://backend.tili.global/mcp

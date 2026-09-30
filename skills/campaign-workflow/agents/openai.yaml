@@ -1,0 +1,14 @@
+interface:
+  display_name: 'Campaign Workflow'
+  short_description: 'Order Strategy → Assets Plan → Creatives → Media Plan → optimize'
+  default_prompt: 'Run the campaign workflow for this workspace.'
+policy:
+  allow_implicit_invocation: true
+
+dependencies:
+  tools:
+    - type: mcp
+      value: tili
+      description: tili MCP gateway (Brand OS + Meta campaign tools)
+      transport: streamable_http
+      url: https://backend.tili.global/mcp

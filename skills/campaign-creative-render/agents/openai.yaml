@@ -1,0 +1,16 @@
+interface:
+  display_name: 'Campaign Creative Render'
+  short_description: 'Render, upload, and verify one approved creative (one asset per subagent)'
+  default_prompt: >-
+    Render one approved assets-plan piece from get_asset_generation_input (prompt + references,
+    taking from each reference only what its note says), upload it with upload_campaign_image
+    purpose "creative", verify the returned imageUrl, and return assetId + imageKey + imageUrl.
+    Never change the plan, open a card, or talk to the advertiser.
+
+dependencies:
+  tools:
+    - type: mcp
+      value: tili
+      description: tili MCP gateway (Brand OS + Meta campaign tools)
+      transport: streamable_http
+      url: https://backend.tili.global/mcp
