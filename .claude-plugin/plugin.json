@@ -10,5 +10,16 @@
   "homepage": "https://tili.global",
   "privacyPolicyUrl": "https://tili.global/privacy",
   "repository": "https://github.com/treebs-technology/tili-plugin",
-  "license": "proprietary"
+  "license": "proprietary",
+  "keywords": [
+    "advertising",
+    "meta-ads",
+    "facebook-ads",
+    "instagram-ads",
+    "marketing",
+    "campaigns",
+    "brand",
+    "creative",
+    "mcp"
+  ]
 }
