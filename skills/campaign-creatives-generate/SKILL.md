@@ -209,7 +209,7 @@ Output: no render → redirect message (write it in 02's correction block on the
 - Advertiser wants new references or a different prompt → Go back card to `assets`, then
   `campaign-assets-plan` (G_ASSETS)
 - Re-approved plan after a go back: render and review only plan pieces without an image in
-  `creatives`; pass just those to `propose_creatives_review` — reused images stay in the set and
+  `creatives`; send only those to `propose_creatives_review` — reused images stay in the set and
   still show on the Creatives card
 - Go back to `creatives` approved (`PRODUCING_CREATIVES`): regenerate only the pieces the
   advertiser asked to change, review them, `propose_creatives_review` with those ids → G_CREATIVES
