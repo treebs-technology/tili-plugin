@@ -57,7 +57,7 @@ hand `{ assetId, imageKey, imageUrl }` back to the root agent. One subagent = on
 - DO NOT alter product details (compose OK); approved logo only as-is
 - DO NOT return a key before the upload is verified; return the `imageKey` the verify call returns,
   never the pending key from the `contentType` call
-- DO NOT call `propose_*` / `save_*` / `confirm_*` / Canva tools
+- DO NOT call `propose_*` / `save_*` / `confirm_*` tools
 - DO NOT review other pieces or talk to the advertiser
 - ONLY render + upload + verify this one piece
 

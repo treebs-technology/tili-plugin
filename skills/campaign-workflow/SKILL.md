@@ -41,7 +41,7 @@ Orchestrate one campaign: status, human gates, advertiser conversation, and when
       the `campaign-creative-render` skill once per piece (pieces with the advertiser's own
       uploaded creative are skipped) → compliance images review → Creatives card
       (`propose_creatives_review`, every piece) → G_CREATIVES
-   5. After G_CREATIVES (`PLANNING_MEDIA`): Canva archive → `bind_campaign_creatives` →
+   5. After G_CREATIVES (`PLANNING_MEDIA`; approved images are already in the media library):
       `campaign-media-strategy` → compliance review → G_MEDIA (approve places)
    6. Live → `campaign-optimize`
 5. **Compliance review before the advertiser sees each phase:** strategy, assets, and media
@@ -93,7 +93,7 @@ advertiser's explicit OK on a **Go back** card. Only before placement (not `PUBL
 - DO NOT invent strategy, assets, or media when a phase skill owns that step
 - DO NOT write Meta Graph JSON for the advertiser — `providers.meta` stays off card copy
 - DO NOT skip human gates on strategy, assets plan, creatives, or media. Media is refused until
-  creatives are approved (G_CREATIVES) and bound (`bind_campaign_creatives`)
+  creatives are approved (G_CREATIVES)
 - DO NOT propose strategy, assets plan, or media without the `campaign-brand-compliance` review
 - `save_campaign_strategy` / `save_campaign_assets` / `propose_creatives_review` /
   `save_media_strategy` save a **draft**; only the advertiser's Approve makes it binding. DO NOT
@@ -128,7 +128,7 @@ advertiser's explicit OK on a **Go back** card. Only before placement (not `PUBL
 | After strategy proposed | Approve strategy card → then plan creatives in words |
 | After assets proposed | Add references on the card if you like, approve → then generate images |
 | Generating / Creatives card | Creating ads + Creatives card → correction block per image, or approve all → then media |
-| Before media | Saving approved creatives to Canva → budget / audience next |
+| Before media | Approved creatives saved to your media library → budget / audience next |
 | Go back proposed | Approve the Go back card → I update that step, then re-check later steps with you |
 | After go back | Updating {phase} → then re-checking {later phases} in order, each back for approval |
 
@@ -141,7 +141,7 @@ advertiser's explicit OK on a **Go back** card. Only before placement (not `PUBL
 | `PRODUCING_ASSETS` / `AWAITING_ASSETS` | `campaign-assets-plan` → G_ASSETS |
 | `PRODUCING_CREATIVES` | `campaign-creatives-generate` (every piece) → `propose_creatives_review` |
 | `AWAITING_CREATIVES` | wait G_CREATIVES; card corrections → regenerate only those → propose again |
-| `PLANNING_MEDIA` | Canva archive → `bind_campaign_creatives` (until every creative is bound) → `campaign-media-strategy` |
+| `PLANNING_MEDIA` | `campaign-media-strategy` |
 | `AWAITING_MEDIA` | wait G_MEDIA |
 | `PUBLISH_FAILED` | `campaign-media-strategy` (`references/media-meta.md`) fix → republish after the advertiser says yes |
 | `PUBLISHED` | `campaign-optimize` |

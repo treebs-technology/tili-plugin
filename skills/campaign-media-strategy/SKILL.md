@@ -17,10 +17,9 @@ Own the Media Plan card and place path. Common fields live here; `providers.meta
 
 1. Orient: confirm media phase. Load approved strategy, assets, and creatives via
    `get_campaign_artifacts` when not already in this chat (an existing media `draft` is the last
-   proposal — amend it), account context, locked providers. Creatives must be `approved` with an
-   `assetRef` on every item; if any is missing, finish the Canva bind first
-   (`campaign-creatives-generate` mode B → `bind_campaign_creatives`) — `save_media_strategy`
-   refuses otherwise (`creatives-missing` / `unarchived_creative`). **Drafted after go back**
+   proposal — amend it), account context, locked providers. Creatives must be `approved`
+   (G_CREATIVES) — `save_media_strategy` refuses otherwise (`creatives-missing` /
+   `missing_creative`). **Drafted after go back**
    (`needsAlignment`): check audiences, bindings (asset ids that changed or disappeared), copy
    hooks, and `providers.meta` against the re-approved strategy, assets, and creatives; change
    only what no longer fits, then steps 3–5 (keep budget, geo, and settings the advertiser already
@@ -62,11 +61,8 @@ Exact field names and limits: tool schema.
 
 ## Examples
 
-Input: `PLANNING_MEDIA` + META locked + creatives bound  
+Input: `PLANNING_MEDIA` + META locked + creatives approved  
 Output: common fields → media-meta → compliance → `save_media_strategy` → wait G_MEDIA
-
-Input: `PLANNING_MEDIA`, creatives approved but not yet bound to Canva  
-Output: do not draft media yet → Canva archive → `bind_campaign_creatives` → then media
 
 Input: `PLANNING_MEDIA` after go back to assets; media `draft` + `needsAlignment`; piece 04 was
 dropped  

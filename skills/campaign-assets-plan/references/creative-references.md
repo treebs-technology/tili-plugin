@@ -15,7 +15,7 @@ upload their refs and attach them. Still encode Brand OS colors/fonts/logo rules
 - DO NOT ignore advertiser take / don’t-take notes
 - DO NOT generate finished creatives here
 - DO NOT attach a reference without a `note` saying what to take (and what not to)
-- Choose sources as needed: Brand OS, advertiser files, Meta, Canva, past tili media, the open web
+- Choose sources as needed: Brand OS, advertiser files, Meta, past tili media, the open web
   — tool schemas decide how to call them
 
 ## What to produce

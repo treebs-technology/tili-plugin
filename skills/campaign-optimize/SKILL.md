@@ -1,8 +1,8 @@
 ---
 name: campaign-optimize
 description: >-
-  Post-publish campaign optimization via MCP: read daily reports, propose lifecycle changes,
-  optionally save strong creatives as Canva templates. Always load when the campaign is PUBLISHED
+  Post-publish campaign optimization via MCP: read daily reports, propose lifecycle changes.
+  Always load when the campaign is PUBLISHED
   or the advertiser asks for performance / pause / resume / end. No silent spend changes.
 license: proprietary
 ---
@@ -18,9 +18,7 @@ Read performance and propose lifecycle actions the advertiser must confirm.
 3. State findings with tool-backed numbers; propose pause / resume / end only with advertiser intent.
    Before `pause_campaign`, `resume_campaign`, `end_campaign`, or any Meta write tool, ask the
    advertiser; pass `userConfirmed: true` only after they say yes in this conversation.
-4. Optional: suggest saving a winning archived design as a Canva brand template (agent Canva MCP;
-   edit/archive only — never Canva invent) with advertiser intent.
-5. Stop — do not start a new build. Hand builds back to `campaign-workflow`.
+4. Stop — do not start a new build. Hand builds back to `campaign-workflow`.
 
 ## Rules
 

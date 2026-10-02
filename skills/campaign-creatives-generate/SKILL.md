@@ -4,10 +4,10 @@ description: >-
   Root-only orchestration of finished creative images AFTER G_ASSETS: fan out one
   campaign-creative-render subagent per planned piece in parallel, spawn the
   campaign-brand-compliance images review, open the Creatives card (hard gate G_CREATIVES,
-  Approval 3/4), then Canva-archive and bind_campaign_creatives. Always load on the root /
-  campaign-workflow agent when generating, reviewing, correcting, or Canva-archiving campaign
-  creatives. Read references/creative-review.md before briefing the images review; read
-  references/asset-metadata.md after G_CREATIVES before Canva bind.
+  Approval 3/4); on approve the images join the workspace media library. Always load on the
+  root / campaign-workflow agent when generating, reviewing, or correcting campaign creatives.
+  Read references/creative-review.md before briefing the images review; read
+  references/asset-metadata.md before propose_creatives_review.
 license: proprietary
 ---
 
@@ -37,21 +37,21 @@ look for new references.
    failed generated ids, with the reviewer's `revise_notes` (max **2** revise rounds), then review
    those ids again. Advertiser creatives are never re-rendered — keep their review notes as
    advisory.
-4. `propose_creatives_review` with every newly generated `{ assetId, imageKey }` (leave
-   advertiser creatives and reused images out — they are already in the set and shown; `images:
-   []` when nothing was rendered) plus the card `heading` + `description` you write for this set
+4. Metadata: read `references/asset-metadata.md` and write `metadata` for every image you send
+   (view each finished image first).
+5. `propose_creatives_review` with every newly generated `{ assetId, imageKey, metadata }` and, on
+   the first proposal, each advertiser creative with its existing `imageKey` + `metadata` (leave
+   reused images out — they are already in the set with their metadata) plus the card `heading` +
+   `description` you write for this set
    (advertiser's language; heading is one sentence about this set, e.g. "Four ads for the first
    warm week, ready for your eye."; description: what to check, changes go in the correction block
    per image, approving locks the set (Approval 3/4) before media; name any advisory issue on
    their own creatives). **Every plan piece
    must have an image** — a partial set is refused and nothing is saved. The card is the hard gate
    G_CREATIVES (`AWAITING_CREATIVES`); wait for it. Reopen with `preview_images_card`
-   (`campaignId`). Card corrections → mode C.
-5. After G_CREATIVES (status `PLANNING_MEDIA`): read `references/asset-metadata.md` → attach
-   metadata → for every piece (generated and advertiser-uploaded) call
-   `get_asset_generation_input` and upload its storage URL (`generatedImage.imageUrl`) to Canva by
-   URL → design from that upload (mode B) → `bind_campaign_creatives` with `{ assetId, assetRef,
-   metadata, editUrl }` per piece. `save_media_strategy` is refused until every creative is bound.
+   (`campaignId`). Card corrections → mode B.
+6. After G_CREATIVES (status `PLANNING_MEDIA`) tili saves the approved images to the workspace
+   media library itself — nothing to upload or bind. Go on to `campaign-media-strategy`.
 
 ## Rules
 
@@ -64,10 +64,8 @@ look for new references.
   (`propose_campaign_go_back`, see `campaign-workflow`), then G_ASSETS
 - DO NOT render images on the root when subagents are available; root orchestrates and shows the
   set — render subagents render + upload + verify, the brand-compliance subagent reviews
-- DO NOT call Canva `generate-design` / Magic Media / invent tools
-- DO NOT upload to Canva until G_CREATIVES is approved
-- ONLY upload to Canva from the creative's storage URL (`generatedImage.imageUrl`) — never base64,
-  a local copy, a re-render, or an image URL from chat or the card
+- DO NOT copy creatives to any design tool — the approved image in tili storage
+  (`upload_campaign_image`) is what gets published
 - DO NOT show the set before the brand-compliance images review — only after `pass` or 2 revise
   rounds exhausted
 - DO NOT re-render, re-review, or re-send creatives without a correction; they stay as-is
@@ -78,7 +76,7 @@ look for new references.
 - Advertiser asks in chat to change an image → do not render; before G_CREATIVES reply with the
   redirect below and reopen the card with `preview_images_card`; after G_CREATIVES it needs a Go
   back card to `creatives` (`propose_campaign_go_back`)
-- ONLY generate + archive; bind Canva refs only with `bind_campaign_creatives` after G_CREATIVES
+- ONLY generate, describe (metadata), and propose; approval registers the images
 
 ## Image changes asked in chat
 
@@ -121,24 +119,10 @@ Stop until they decide. Non-product creatives: confirm no product cutout is need
 Parallel render → brand-compliance images review → re-render failed → show. Ask:
 
 > Here are all the ads. To change one, press **Request a correction** under it on the card and
-> write the change there; or **approve all** to lock the set, then I save them into Canva and
-> plan media.
+> write the change there; or **approve all** to lock the set, then they are saved to your media
+> library and I plan media.
 
-### B. Archive pass (after G_CREATIVES)
-
-1. Asset metadata for every id (`references/asset-metadata.md`)
-2. Folder: `TILI SMM` → `{campaignName} ({campaignId})`
-3. Per piece: `get_asset_generation_input` → upload `generatedImage.imageUrl` to Canva by URL
-   (right after reading it — the URL is short-lived) → design from the uploaded image, in the
-   campaign folder, with a human-readable name:
-
-   `C{campaignId} — {Campaign name} — {Format} — {Role}`
-
-4. Tags: `tili`, `campaign:{id}`, `asset:{id}`, `channel:…`, `format:…`, `funnel:…`
-5. `bind_campaign_creatives` with `assetRef` = `canva:{designId}`, `editUrl`, and `metadata` per
-   piece (call again for pieces that failed; the response lists `unbound`)
-
-### C. Correction pass (Creatives card)
+### B. Correction pass (Creatives card)
 
 The advertiser writes corrections (note + optional one-off references) on one or more images and
 sends them together. The card records them on the creatives draft and posts a chat message listing the
@@ -158,27 +142,27 @@ creatives. That message is only the trigger — the change itself is read from
    it checks the note is applied and everything else still matches the approved prompt. On
    `revise`, re-spawn render for those ids with the reviewer's notes — the correction stays pending,
    so render still starts from the same base (same 2-round cap).
-4. `propose_creatives_review` with just those ids and a new `heading` + `description` naming what
+4. `propose_creatives_review` with just those ids (fresh `metadata` for each redone image) and a
+   new `heading` + `description` naming what
    was redone (e.g. "02 and 04 redone with your corrections.") → fresh Creatives card: corrected
    images replaced, every other creative unchanged. The tool refuses uncorrected ids while
    corrections are pending, and the card cannot be approved while any correction is pending.
-5. Canva archive still runs only after G_CREATIVES (mode B).
 
 ## Examples
 
 Input: G_ASSETS approved (4 pieces) + product photo chosen  
-Output: 4 render subagents in parallel → brand-compliance images review → Creatives card
-(G_CREATIVES) → metadata → upload each `generatedImage.imageUrl` to Canva → designs →
-`bind_campaign_creatives` → media
+Output: 4 render subagents in parallel → brand-compliance images review → metadata per image →
+`propose_creatives_review` → Creatives card (G_CREATIVES) → approved images saved to the media
+library → media
 
 Input: G_ASSETS approved (4 pieces); advertiser uploaded their own creative for 03  
-Output: 3 render subagents (01, 02, 04) → review 01–04 (03 advisory only) →
-`propose_creatives_review` with 01, 02, 04 → Creatives card shows all four, 03 tagged "Uploaded by
-you"
+Output: 3 render subagents (01, 02, 04) → review 01–04 (03 advisory only) → metadata for all four
+→ `propose_creatives_review` with 01, 02, 04 and 03 (its existing imageKey) → Creatives card shows
+all four, 03 tagged "Uploaded by you"
 
 Input: G_ASSETS approved; advertiser uploaded their own creative for every piece  
-Output: no product-image question, no render → review all (advisory) → `propose_creatives_review`
-with `images: []` → Creatives card
+Output: no product-image question, no render → review all (advisory) → metadata for each →
+`propose_creatives_review` with every piece's existing imageKey + metadata → Creatives card
 
 Input: 4 pieces, only 01–03 rendered, `propose_creatives_review` with 01–03  
 Output: refused ("Missing: 04"), nothing saved → render 04 → review → propose all four
@@ -199,11 +183,8 @@ Output: no render → redirect message (write it in 02's correction block on the
 ## Edge cases
 
 - After revise-cap with remaining failures: still show; name what looks off
-- Canva cannot fetch the storage URL (expired, 403) → call `get_asset_generation_input` again for a
-  fresh `generatedImage.imageUrl` and retry once; still failing → tell the advertiser which piece
-  did not archive and do not bind it
-- `generatedImage.imageUrl` is null → the creative is missing from storage; do not archive that
-  piece, say so
+- `propose_creatives_review` refuses "needs metadata" → add `metadata` for the listed pieces
+  (advertiser uploads with their existing imageKey) and propose again
 - Card corrections regenerate: re-run the brand-compliance images review before re-show (same
   2-round cap per batch)
 - Advertiser wants new references or a different prompt → Go back card to `assets`, then
@@ -212,8 +193,8 @@ Output: no render → redirect message (write it in 02's correction block on the
   `creatives`; send only those to `propose_creatives_review` — reused images stay in the set and
   still show on the Creatives card
 - Go back to `creatives` approved (`PRODUCING_CREATIVES`): regenerate only the pieces the
-  advertiser asked to change, review them, `propose_creatives_review` with those ids → G_CREATIVES
-  → `bind_campaign_creatives` again for redone pieces
+  advertiser asked to change, review them, `propose_creatives_review` with those ids (+ metadata)
+  → G_CREATIVES
 - Advertiser creative looks off-brand or wrong format → still show it; name the issue in the card
   description so they can correct it on the card or keep it
 - Host cannot spawn subagents → render sequentially on root with the same per-asset steps, then
@@ -223,4 +204,4 @@ Output: no render → redirect message (write it in 02's correction block on the
 
 - `references/creative-review.md` — shared images checklist (same file as brand-compliance); read
   before briefing the images review, or run it inline when subagents are unavailable
-- `references/asset-metadata.md` — after G_CREATIVES before Canva bind
+- `references/asset-metadata.md` — before `propose_creatives_review`

@@ -15,8 +15,8 @@ license: proprietary
 
 Produce one complete `CampaignAssets` **plan** for `save_campaign_assets` (G_ASSETS). Each piece
 carries its final image prompt plus the reference images the generator must follow — the image
-phase renders exactly this. The plan holds no images: finished creatives and their Canva refs
-live in the separate `creatives` artifact (G_CREATIVES). Payload shape and limits: MCP tool
+phase renders exactly this. The plan holds no images: finished creatives live in the
+separate `creatives` artifact (G_CREATIVES). Payload shape and limits: MCP tool
 schema.
 
 ## Workflow
@@ -31,7 +31,7 @@ schema.
    changed. Then steps 5–6.
 2. **Find references** (`references/creative-references.md`, unless soft-skipped). Attach them now:
    - Brand OS section images (mood board, product shots): reuse their `imageKey` as-is.
-   - Anything else (advertiser files, web, Meta posts, past tili media, Canva exports):
+   - Anything else (advertiser files, web, Meta posts, past tili media):
      `upload_campaign_image` with `purpose: "reference"` (public https `url`, or a file via the
      presigned `contentType` → PUT → `imageKey` flow) → `imageKey`.
    - Put each key in that piece's `visual_direction.references[]` with a take / don’t-take `note`.
@@ -70,7 +70,7 @@ schema.
 - DO NOT leave reference finding for the image phase — every reference the generator needs is
   attached to its piece here
 - DO NOT pass raw URLs as references — only `imageKey`s from `upload_campaign_image` or Brand OS
-- DO NOT call Canva invent / upload to Canva / speak to the advertiser (unless root brief allows)
+- DO NOT speak to the advertiser (unless root brief allows)
 - DO NOT invent brand claims ruled out by Brand OS
 - DO NOT return partial items — every planned piece complete on first return
 - DO NOT change an approved assets plan (e.g. at `PRODUCING_CREATIVES` or `PLANNING_MEDIA`) —
