@@ -17,13 +17,14 @@ Own the Media Plan card and place path. Common fields live here; `providers.meta
 
 1. Orient: confirm media phase. Load approved strategy, assets, and creatives via
    `get_campaign_artifacts` when not already in this chat (an existing media `draft` is the last
-   proposal — amend it), account context, locked providers. Creatives must be `approved`
+   proposal — amend it), account context, campaign channels. Creatives must be `approved`
    (G_CREATIVES) — `save_media_strategy` refuses otherwise (`creatives-missing` /
    `missing_creative`). **Drafted after go back**
    (`needsAlignment`): check audiences, bindings (asset ids that changed or disappeared), copy
    hooks, and `providers.meta` against the re-approved strategy, assets, and creatives; change
    only what no longer fits, then steps 3–5 (keep budget, geo, and settings the advertiser already
-   chose). Only proceed when locked providers are executable (see `list_accessible_providers`).
+   chose). Only proceed when the campaign has an executable channel (`META_ADS`; see
+   `list_accessible_providers`).
 2. Choose the campaign type (Standard, Catalog sales, Advantage+ sales, Advantage+ catalog
    sales) with the decision table in `references/media-meta.md`, using the catalog readiness
    recorded during strategy research. Catalog ad sets need no bindings; Advantage+ needs CBO.

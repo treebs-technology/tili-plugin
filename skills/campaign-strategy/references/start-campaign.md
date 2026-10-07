@@ -35,7 +35,7 @@ events) — see Catalog readiness in `strategy-research.md`.
 Covered by the alignment check in `strategy-research.md` (campaign-strategy step 1). Do not
 create a campaign until it passes.
 
-### 4. Providers + create
+### 4. Channels + create
 
 1. Before `create_campaign`: `list_campaigns` for open work. If one matches this goal, **stop and ask**:
 
@@ -46,8 +46,10 @@ create a campaign until it passes.
    - **Continue** → `get_campaign_status` + `get_campaign_artifacts` (no `artifact`, full
      context); follow `campaign-workflow` (resume step)
    - **Create new** → proceed
-2. When needed: list accessible providers / set providers while still `DRAFTING`.
-3. `create_campaign` with `name` (3–80 chars) and optional `providers` (default META).
+2. When needed: list accessible providers / `set_campaign_channels` while still `DRAFTING`.
+3. `create_campaign` with `name` (3–80 chars) and optional `channels` (default `META_ADS`;
+   `INFLUENCER` is planned only — tili does not execute it yet). The campaign holds the strategy;
+   each channel executes its part.
 
 ### 5. Continue into strategy
 

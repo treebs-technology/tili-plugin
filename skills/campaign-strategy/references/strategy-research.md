@@ -42,14 +42,12 @@ other accessible tool that helps you understand the direction.
   conversion events really fire. `get_account_context`, `get_pixel_stats`,
   `list_accessible_providers`. `get_account_context` also returns `maxCampaignDailyBudget` — sanity
   check `plannedBudget` against it (averaged over the flight) before drafting.
-- **Catalog readiness** (sales goals on a product range) — does an eligible catalog exist, how many
-  products, is the pixel connected to it, do ViewContent / AddToCart / Purchase fire?
-  `ads_catalog_list_dpa_eligible_catalogs`, `ads_catalog_get_dynamic_ads_health`,
-  `ads_catalog_event_source_get_health`, `get_pixel_stats`. Record the answer in the conversation;
-  the media phase uses it to choose the campaign type.
+- **Catalog readiness** (sales goals on a product range) — does a catalog exist, which product set
+  fits the offer, do ViewContent / AddToCart / Purchase fire? `get_account_context` (catalogs),
+  `get_pixel_stats`; the product set comes from the advertiser. Record the answer in the
+  conversation; the media phase uses it to choose the campaign type.
 - **Customers, products, sales** — best sellers, pricing, segments, repeat behaviour, reviews.
-  `list_data_sources`, then `describe_database` / `query_database` or `describe_file` /
-  `read_file`. Small, filtered samples.
+  Ask the advertiser; workspace data sources are not readable over MCP.
 - **Audience signals** — who the advertiser already targets or owns.
   `list_custom_audiences`, `list_saved_audiences`.
 - **What the brand already says** — recurring themes, proof points, what got engagement.

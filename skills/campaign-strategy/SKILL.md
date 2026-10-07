@@ -25,7 +25,7 @@ and researched.
    conditions: `references/strategy-research.md`. Misaligned or missing a key fact → stop, explain
    the gap in plain language, ask. Nothing is created and nothing drafted until they answer.
 2. If no campaign id yet (or advertiser asks to start): follow `references/start-campaign.md`
-   through `create_campaign`. Existing campaign: confirm providers locked; if this chat has not
+   through `create_campaign`. Existing campaign: confirm its channels; if this chat has not
    seen it, `get_campaign_artifacts` `artifact: "strategy"` — a `draft` is the last unapproved
    proposal (reopen or amend it, don't restart blind). A `needsAlignment` draft means the
    advertiser went back to strategy: correction mode on that draft with the change they asked
@@ -40,8 +40,12 @@ and researched.
    `objective` and `funnel_stage`. Downstream work follows these fields: `objective` and
    `funnel_stage` set media optimisation and how direct the creative is; `audience` drives
    targeting and tone; every asset carries `key_message` and `cta`; each angle becomes one or more
-   assets; assets and retargeting answer `primary_objection`; reports judge against
-   `business_goal`. `market` and `schedule` set the geo and flight scope media planning inherits;
+   assets; assets and retargeting answer `primary_objection`. `objective` is one of SALES, LEADS,
+   AWARENESS, TRAFFIC; `targetMetric` must fit it (SALES: ROAS, CPA, REVENUE, ORDERS; LEADS:
+   LEADS, CPL; AWARENESS: REACH, CPM; TRAFFIC: CLICKS, CPC) and `targetValue` is the number reports
+   judge the campaign against — ground it in past results or the brief, never invent precision.
+   `business_goal` explains the commercial why. `market` and `schedule` set the geo and flight
+   scope every channel inherits;
    `plannedBudget` is checked against this account's daily budget ceiling (`get_account_context`,
    `maxCampaignDailyBudget`) averaged over the flight when `schedule.endDate` is set — ground it in
    that ceiling, not a guess.
