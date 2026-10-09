@@ -1,13 +1,13 @@
 # Assets checklist (`phase: assets`)
 
-Score a `CampaignAssets` plan before `save_campaign_assets`. Every piece is checked against Brand
+Score a `CampaignAssets` plan before `save_channel_assets`. Every piece is checked against Brand
 OS, the approved strategy, and the prompt doctrine the image generator depends on.
 
 ## Inputs to load
 
 - `get_brand_os`: brand voice, moodboard take / don't-take, colours, type, logos (`use` notes),
   never-dos
-- `get_campaign_artifacts` `artifact: "strategy"` — must be `approved`
+- `get_campaign_strategy` — must be `approved`
 - The `draft` and `goBackReason` from the brief
 - Prompt self-check in `campaign-assets-plan/references/image-prompt.md`
 

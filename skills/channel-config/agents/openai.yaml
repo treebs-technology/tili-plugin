@@ -1,7 +1,7 @@
 interface:
-  display_name: 'Campaign Media Plan'
-  short_description: 'Draft MediaStrategy with providers.meta for G_MEDIA'
-  default_prompt: 'Draft the campaign media plan.'
+  display_name: 'Channel Config'
+  short_description: 'Draft the Meta channel config with providers.meta for G_CONFIG'
+  default_prompt: 'Draft the Meta channel config.'
 policy:
   allow_implicit_invocation: true
 

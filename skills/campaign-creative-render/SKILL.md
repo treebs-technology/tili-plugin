@@ -3,7 +3,7 @@ name: campaign-creative-render
 description: >-
   Render ONE finished creative image for one approved assets-plan piece, upload it, and verify the
   upload. Always load when the root campaign-creatives-generate agent spawns a render subagent with
-  a campaignId + assetId after G_ASSETS (first render, revise round, or Creatives card correction).
+  a channelId + assetId after G_ASSETS (first render, revise round, or Creatives card correction).
   Uses only the approved prompt and attached references. Does not review the set, open cards,
   change the plan, or talk to the advertiser.
 license: proprietary
@@ -16,7 +16,7 @@ hand `{ assetId, imageKey, imageUrl }` back to the root agent. One subagent = on
 
 ## Workflow
 
-1. `get_asset_generation_input` (`campaignId`, `assetId`) → prompt, format, on-image copy, and the
+1. `get_channel_asset_input` (`channelId`, `assetId`) → prompt, format, on-image copy, and the
    reference images with their notes. **Look at every attached reference image** (by
    `imageIndex`) and take from each only what its note says — e.g. the product exactly from the
    product ref, only lighting from the mood ref.
@@ -36,7 +36,7 @@ hand `{ assetId, imageKey, imageUrl }` back to the root agent. One subagent = on
    When the input has `advertiserCreative: true` and **no** `correction`: do not render or upload —
    return `{ assetId, imageKey: generatedImage.imageKey, imageUrl: generatedImage.imageUrl }` and
    stop.
-3. Upload the full, untrimmed image with `upload_campaign_image` (`purpose: "creative"`, the same
+3. Upload the full, untrimmed image with `upload_channel_image` (`purpose: "creative"`, the same
    `assetId`) — presigned, never base64: call with `contentType` → PUT the file to `uploadUrl`
    with that `Content-Type` (the returned `curl`) → call again with the `imageKey` → `imageUrl`.
 4. **Verify the full upload:** open the returned `imageUrl` and check that the image decodes
@@ -50,7 +50,7 @@ hand `{ assetId, imageKey, imageUrl }` back to the root agent. One subagent = on
 - DO NOT change, extend, or reinterpret the prompt beyond root revise notes or the correction note
 - DO NOT drop the approved prompt on a correction — the note adjusts it, it does not replace it
   (advertiser creatives excepted)
-- ONLY apply changes from `get_asset_generation_input` (`correction`) or the brand-compliance
+- ONLY apply changes from `get_channel_asset_input` (`correction`) or the brand-compliance
   images review revise notes relayed by root — never advertiser requests relayed from chat
 - DO NOT search for new references or drop attached ones
 - DO NOT take anything from a reference beyond what its note says
@@ -63,20 +63,20 @@ hand `{ assetId, imageKey, imageUrl }` back to the root agent. One subagent = on
 
 ## Examples
 
-Input: `{ campaignId: 42, assetId: "feed-01" }`  
+Input: `{ channelId: 42, assetId: "feed-01" }`  
 Output: generation input → view refs → render 4:5 image → upload → verify `imageUrl` →
 `{ assetId: "feed-01", imageKey: "…", imageUrl: "…" }`
 
-Input: `{ campaignId: 42, assetId: "story-02", revise: "background too dark; keep product crop" }`  
+Input: `{ channelId: 42, assetId: "story-02", revise: "background too dark; keep product crop" }`  
 Output: same prompt + refs with that note applied → upload → verify → new `imageKey` + `imageUrl`
 
-Input: `{ campaignId: 42, assetId: "feed-01" }` and the generation input has `correction`
+Input: `{ channelId: 42, assetId: "feed-01" }` and the generation input has `correction`
 ("warmer light, lose the second prop" + 1 reference)  
 Output: regenerate from the approved prompt + plan refs + current creative + note + correction
 reference → warmer light, second prop gone, everything else as the prompt describes → upload →
 verify → new `imageKey` + `imageUrl`
 
-Input: `{ campaignId: 42, assetId: "feed-03" }` and the generation input has
+Input: `{ channelId: 42, assetId: "feed-03" }` and the generation input has
 `advertiserCreative: true`, no `correction`  
 Output: no render → `{ assetId: "feed-03", imageKey: generatedImage.imageKey, imageUrl:
 generatedImage.imageUrl }`

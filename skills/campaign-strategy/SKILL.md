@@ -2,18 +2,19 @@
 name: campaign-strategy
 description: >-
   Check the brief against the company, research the campaign direction, then draft the messaging
-  CampaignStrategy (plus market, flight schedule, and planned budget) and open the campaign
-  container when needed. Always load for campaign strategy work, create_campaign, G_STRATEGY, or
-  when status is DRAFTING / AWAITING_STRATEGY. No Meta placements, bid strategy, or Graph JSON —
-  those belong in campaign-media-strategy. Read references/strategy-research.md before drafting
-  and references/start-campaign.md before create_campaign.
+  CampaignStrategy (plus market, flight schedule, planned budget and its split across channels)
+  and open the campaign when needed. Always load for campaign strategy work, create_campaign,
+  G_STRATEGY, or when the campaign is DRAFTING / AWAITING_STRATEGY. No Meta placements, bid
+  strategy, or Graph JSON — those belong in channel-config. Read references/strategy-research.md
+  before drafting and references/start-campaign.md before create_campaign.
 license: proprietary
 ---
 
 # Campaign Strategy
 
 Produce one messaging `CampaignStrategy` for `save_campaign_strategy` (G_STRATEGY). It is the core
-document that sets campaign direction: assets, creatives, media, and optimisation all follow it.
+document that sets campaign direction: every channel's assets, creatives and config, and
+optimisation, follow it. Approving it starts the campaign's channels.
 Field meaning and limits: MCP tool schema descriptions. Never propose before the brief is aligned
 and researched.
 
@@ -25,8 +26,8 @@ and researched.
    conditions: `references/strategy-research.md`. Misaligned or missing a key fact → stop, explain
    the gap in plain language, ask. Nothing is created and nothing drafted until they answer.
 2. If no campaign id yet (or advertiser asks to start): follow `references/start-campaign.md`
-   through `create_campaign`. Existing campaign: confirm its channels; if this chat has not
-   seen it, `get_campaign_artifacts` `artifact: "strategy"` — a `draft` is the last unapproved
+   through `create_campaign`. Existing campaign: `get_campaign_status` for its channels; if this
+   chat has not seen it, `get_campaign_strategy` — a `draft` is the last unapproved
    proposal (reopen or amend it, don't restart blind). A `needsAlignment` draft means the
    advertiser went back to strategy: correction mode on that draft with the change they asked
    for (skip steps 1 and 3 unless the change contradicts the brief), then steps 4–6.
@@ -45,15 +46,24 @@ and researched.
    LEADS, CPL; AWARENESS: REACH, CPM; TRAFFIC: CLICKS, CPC) and `targetValue` is the number reports
    judge the campaign against — ground it in past results or the brief, never invent precision.
    `business_goal` explains the commercial why. `market` and `schedule` set the geo and flight
-   scope every channel inherits;
-   `plannedBudget` is checked against this account's daily budget ceiling (`get_account_context`,
-   `maxCampaignDailyBudget`) averaged over the flight when `schedule.endDate` is set — ground it in
-   that ceiling, not a guess.
+   scope every channel inherits.
+   **Budget and its split.** `plannedBudget` is the total for the flight, in the workspace
+   currency (`get_account_context` → `workspace.currency`; it matches the ad account's).
+   `channels[]` says how much of it each channel spends: today one entry, `META_ADS`, with its
+   `plannedBudget` share (it may be all of the total) and optional `startDate` / `endDate`
+   inside the schedule. The shares may not exceed the total; if the refusal says part of the total
+   is already allocated to channels managed in the web app, plan within what is left. The Meta
+   share averaged over its flight must stay under `maxCampaignDailyBudget`, and the channel's
+   config (`channel-config`) must fit that share — ground it in the ceiling and the brief, not a
+   guess.
+   **What reports judge.** After launch, `targetMetric` / `targetValue` become the objective status
+   (ahead / on track / behind / too early) and the shares become budget pacing in
+   `get_campaign_performance`; choose them so the advertiser recognises the goal they gave you.
 5. Return the draft to root for the `campaign-brand-compliance` review (Brand OS + go-back
    reason). On `revise` / `fail` → apply its `revise_notes` (correction mode) and return again.
 6. Tell the advertiser in 2–4 lines what research found and what it changes, then return the draft
    or call `save_campaign_strategy` when the orchestrator allows → wait G_STRATEGY. Reopen later
-   with `preview_strategy_card` (`campaignId`) — do not re-propose only to show.
+   with `preview_campaign_strategy_card` (`campaignId`) — do not re-propose only to show.
 
 ## Rules
 
@@ -63,10 +73,12 @@ and researched.
 - DO NOT number angles; send `supporting_messages` as `{ title, description }` in priority order
 - DO NOT dump raw data rows to the advertiser; summarise findings
 - DO NOT emit Meta `OUTCOME_*` objectives, placements, bid strategies, ABO/CBO budget mode,
-  region/city-level geo targeting, or Graph dumps — `market` and `plannedBudget` are business-level
-  only
+  daily budgets, region/city-level geo targeting, or Graph dumps — `market`, `plannedBudget` and
+  `channels[]` are business-level only
+- DO NOT allocate budget to channels you cannot see (creators are planned by the advertiser in the
+  web app)
 - DO NOT invent brand facts ruled out by BINDING Brand OS
-- DO NOT write assets, creatives, or media
+- DO NOT write assets, creatives, or channel config
 - DO NOT change an approved strategy — that needs an approved Go back card first
   (`campaign-workflow`)
 - DO NOT talk to the advertiser unless the orchestrator brief says you may
@@ -77,8 +89,9 @@ and researched.
 
 Input: Brand OS ready + goal “sell Basecamp to SMBs in RO” + new campaign  
 Output: alignment check (Basecamp is offered, SMBs allowed, purchase event fires) → start-campaign
-→ research (data sources, past posts/ads, audiences, past campaigns) → draft → compliance review
-→ summary → `save_campaign_strategy`
+→ research (past posts/ads, audiences, past campaigns and their performance) → draft incl.
+`channels: [{ type: "META_ADS", plannedBudget }]` → compliance review → summary →
+`save_campaign_strategy`
 
 Input: goal “promote our new mobile app” but Brand OS and data show no app  
 Output: stop at alignment; say the app is not found in Brand OS or data and ask what to promote

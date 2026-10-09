@@ -4,7 +4,7 @@ interface:
   default_prompt: >-
     Review one campaign phase (strategy, assets plan, finished images, or media plan) before the
     advertiser sees it: score the phase checklist against Brand OS and the approved earlier phases
-    (get_campaign_artifacts); return BrandCompliance. Never save, propose, regenerate, or open a
+    (get_campaign_strategy, get_channel_artifacts); return BrandCompliance. Never save, propose, regenerate, or open a
     human card.
 
 dependencies:

@@ -6,7 +6,7 @@ stop after `create_campaign` for an empty handoff.
 ## Rules
 
 - DO NOT invent brand facts missing from tools/conversation
-- DO NOT write assets, creatives, or media here
+- DO NOT write assets, creatives, or channel config here
 - DO NOT open a second campaign for the same work without asking (continue vs create new)
 - DO NOT quietly resume an existing campaign without explicit advertiser choice
 - DO NOT persist a free-text brief — messaging lives in `CampaignStrategy`
@@ -16,10 +16,11 @@ stop after `create_campaign` for an empty handoff.
 
 ### 1. Load the account
 
-Call `get_account_context` first. Record currency (later budgets; never convert), timezone, connected
-page, pixel presence, and `maxCampaignDailyBudget` ceiling. For sales goals on a product range, also
-record catalog readiness (catalog, product count, pixel link, ViewContent / AddToCart / Purchase
-events) — see Catalog readiness in `strategy-research.md`.
+Call `get_account_context` first. Record `workspace.currency` (every campaign amount is in it; it
+matches the ad account's — never convert), `workspace.timeZone` (reports count days in it),
+connected page, pixel presence, and the `maxCampaignDailyBudget` ceiling per Meta channel. For sales goals on a product range, also
+record catalog readiness (`get_catalog_health`: product count, must-fix issues, pixel link, event
+match rates, product sets) — see Catalog readiness in `strategy-research.md`.
 
 ### 2. Brand OS (must-gate)
 
@@ -35,7 +36,7 @@ events) — see Catalog readiness in `strategy-research.md`.
 Covered by the alignment check in `strategy-research.md` (campaign-strategy step 1). Do not
 create a campaign until it passes.
 
-### 4. Channels + create
+### 4. Create
 
 1. Before `create_campaign`: `list_campaigns` for open work. If one matches this goal, **stop and ask**:
 
@@ -43,13 +44,14 @@ create a campaign until it passes.
    > 1. Continue that campaign
    > 2. Create a new campaign
 
-   - **Continue** → `get_campaign_status` + `get_campaign_artifacts` (no `artifact`, full
-     context); follow `campaign-workflow` (resume step)
+   - **Continue** → `get_campaign_status` + `get_campaign_strategy` + `get_channel_artifacts`
+     (full context); follow `campaign-workflow` (resume step)
    - **Create new** → proceed
-2. When needed: list accessible providers / `set_campaign_channels` while still `DRAFTING`.
-3. `create_campaign` with `name` (3–80 chars) and optional `channels` (default `META_ADS`;
-   `INFLUENCER` is planned only — tili does not execute it yet). The campaign holds the strategy;
-   each channel executes its part.
+2. `create_campaign` with `name` (3–80 chars). It opens the campaign (the strategy) with one
+   `META_ADS` channel on this connection's ad account; keep the returned `campaignId` and
+   `channels[0].channelId` — channel phases use the `channelId`. If it refuses because the
+   workspace and ad-account currencies differ, tell the advertiser to align them in workspace
+   settings and stop.
 
 ### 5. Continue into strategy
 

@@ -7,8 +7,9 @@ alignment covers Brand OS, the draft's own consistency, and the go-back reason w
 
 - `get_brand_os`: brand voice, products and pricing, guardrails / never-dos
 - The `draft` and `goBackReason` from the brief
-- `get_campaign_artifacts` `artifact: "strategy"` when `goBackReason` is set — the previously
-  approved version shows what must stay unchanged
+- `get_campaign_strategy` when `goBackReason` is set — the previously approved version shows what
+  must stay unchanged
+- `get_account_context`: `maxCampaignDailyBudget`, `workspace.currency`
 
 ## Checklist
 
@@ -28,8 +29,14 @@ alignment covers Brand OS, the draft's own consistency, and the go-back reason w
 7. **`Alignment: market and flight`** — pass when `market` names real, sellable countries per
    Brand OS / the brief, and `schedule` is a real, non-past date range consistent with the brief.
 8. **`Alignment: planned budget`** — pass when `plannedBudget` is grounded in the brief (not
-   invented) and, when `schedule.endDate` is set, its daily average does not exceed the account's
-   `maxCampaignDailyBudget` ceiling from `get_account_context`.
+   invented) and stated in the workspace currency.
+9. **`Alignment: objective and target`** — pass when `targetMetric` fits `objective` (SALES: ROAS,
+   CPA, REVENUE, ORDERS; LEADS: LEADS, CPL; AWARENESS: REACH, CPM; TRAFFIC: CLICKS, CPC) and
+   `targetValue` is grounded in past results or the brief — it is what reports judge the campaign
+   against.
+10. **`Alignment: channel split`** — pass when `channels[]` has one `META_ADS` entry, the shares
+   do not exceed `plannedBudget`, channel dates fall inside `schedule`, and the Meta share averaged
+   over its flight (when it ends) stays under `maxCampaignDailyBudget`.
 
 ## Verdict
 

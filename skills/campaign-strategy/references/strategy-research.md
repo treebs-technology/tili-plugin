@@ -44,17 +44,20 @@ other accessible tool that helps you understand the direction.
   check `plannedBudget` against it (averaged over the flight) before drafting.
 - **Catalog readiness** (sales goals on a product range) — does a catalog exist, which product set
   fits the offer, do ViewContent / AddToCart / Purchase fire? `get_account_context` (catalogs),
-  `get_pixel_stats`; the product set comes from the advertiser. Record the answer in the
-  conversation; the media phase uses it to choose the campaign type.
+  `get_catalog_health` (products, must-fix issues, pixel link and match rates, product sets),
+  `get_pixel_stats`. Record the answer in the conversation; the media phase uses it to choose the
+  campaign type.
 - **Customers, products, sales** — best sellers, pricing, segments, repeat behaviour, reviews.
   Ask the advertiser; workspace data sources are not readable over MCP.
 - **Audience signals** — who the advertiser already targets or owns.
-  `list_custom_audiences`, `list_saved_audiences`.
+  `list_audiences`.
 - **What the brand already says** — recurring themes, proof points, what got engagement.
   `list_facebook_posts`, `list_instagram_posts`, `list_ad_creatives`, `fetch_meta_media`,
   `list_media_assets_for_references`.
 - **Campaign history** — what ran before, what performed, which objections came up.
-  `list_campaigns`, then `get_campaign_status` / `get_campaign_daily_report` on relevant ones.
+  `list_campaigns` (each with its performance line), then `get_campaign_performance` on relevant
+  ones — objective status, ROAS / CPA, what the suggestions said — and `get_channel_performance`
+  when ad-set or audience results matter.
 
 ## 3. From findings to fields
 

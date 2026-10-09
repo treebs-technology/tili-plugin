@@ -1,6 +1,6 @@
 # Creative review checklist (`phase: images`)
 
-Score the **final pixels** of finished creatives before `propose_creatives_review`. One checklist,
+Score the **final pixels** of finished creatives before `propose_channel_creatives`. One checklist,
 shared by `campaign-brand-compliance` (runs it) and `campaign-creatives-generate` (briefs it, or
 runs it inline when the host cannot spawn subagents). Score only — never regenerate, upload, or
 talk to the advertiser.
@@ -9,11 +9,11 @@ talk to the advertiser.
 
 - The brief: `images: [{ assetId, imageKey, imageUrl }]`, `advertiserCreativeIds`, and
   `corrections: [{ assetId, note }]` on a correction pass
-- `get_asset_generation_input` per id: approved prompt, `visual_direction`, format, on-image copy,
+- `get_channel_asset_input` per id: approved prompt, `visual_direction`, format, on-image copy,
   reference images with their notes; `generatedImage` for advertiser creatives; `correction`
   (`note`, references, `baseImage`) for corrected ids
 - `get_brand_os`: `section: "logos"` (marks + `use` notes), palette, type, never-dos
-- `get_campaign_artifacts` `artifact: "strategy"` (approved) for the `strategy` area
+- `get_campaign_strategy` (approved) for the `strategy` area
 - Open every image from `imageUrl` (or the inline attachment) and look at it at full size
 
 ## Checklist

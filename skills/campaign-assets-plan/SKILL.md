@@ -1,9 +1,9 @@
 ---
 name: campaign-assets-plan
 description: >-
-  Produce the CampaignAssets plan for G_ASSETS: copy, nested visual_direction, one
+  Produce a channel's CampaignAssets plan for G_ASSETS: copy, nested visual_direction, one
   image_generation_prompt per piece, and the reference images attached to it. Always load when
-  drafting or revising the assets plan, after G_STRATEGY, or when status is PRODUCING_ASSETS /
+  drafting or revising the assets plan, after G_STRATEGY, or when the channel is PRODUCING_ASSETS /
   AWAITING_ASSETS. References are found and attached here, not at image generation. Always read
   references/image-prompt.md before writing prompts; read references/creative-references.md when
   gathering refs (soft-skip if the advertiser already provided refs + clear direction). Does not
@@ -13,7 +13,8 @@ license: proprietary
 
 # Campaign Assets Plan
 
-Produce one complete `CampaignAssets` **plan** for `save_campaign_assets` (G_ASSETS). Each piece
+Produce one complete `CampaignAssets` **plan** for a channel (`save_channel_assets` with its
+`channelId`, G_ASSETS). The pieces are the images and copy that channel runs. Each piece
 carries its final image prompt plus the reference images the generator must follow — the image
 phase renders exactly this. The plan holds no images: finished creatives live in the
 separate `creatives` artifact (G_CREATIVES). Payload shape and limits: MCP tool
@@ -21,9 +22,11 @@ schema.
 
 ## Workflow
 
-1. Load brief: approved strategy (`get_campaign_artifacts` `artifact: "strategy"` when it is not
-   already in this chat; must be `approved`), Brand OS, advertiser visual-direction / product
-   notes. An existing assets `draft` there is the last proposal — amend it rather than restart.
+1. Load brief: approved strategy (`get_campaign_strategy` when it is not already in this chat;
+   must be `approved`), the channel (`get_campaign_status` → `channels[]`: its `channelId` and
+   type), Brand OS, advertiser visual-direction / product notes. An existing assets `draft`
+   (`get_channel_artifacts` `artifact: "assets"`) is the last proposal — amend it rather than
+   restart.
    **Drafted after go back** (`needsAlignment`): compare every piece with the approved strategy
    (and the go-back reason when assets was the reopened phase); change only copy, prompts, or
    references that no longer fit, keep ids. Leave untouched pieces exactly as they are: the server
@@ -32,7 +35,7 @@ schema.
 2. **Find references** (`references/creative-references.md`, unless soft-skipped). Attach them now:
    - Brand OS section images (mood board, product shots): reuse their `imageKey` as-is.
    - Anything else (advertiser files, web, Meta posts, past tili media):
-     `upload_campaign_image` with `purpose: "reference"` (public https `url`, or a file via the
+     `upload_channel_image` (`channelId`) with `purpose: "reference"` (public https `url`, or a file via the
      presigned `contentType` → PUT → `imageKey` flow) → `imageKey`.
    - Put each key in that piece's `visual_direction.references[]` with a take / don’t-take `note`.
 3. **Write prompts** with `references/image-prompt.md` — one prompt per piece, the executable form
@@ -48,8 +51,8 @@ schema.
 5. Return the plan to root for the `campaign-brand-compliance` review (Brand OS + approved
    strategy). On `revise` / `fail` → apply its `revise_notes` to the named pieces (keep ids) and
    return again.
-6. Root calls `save_campaign_assets` → wait G_ASSETS (Approval 2/4). Reopen with
-   `preview_assets_card` (`campaignId`). After Approve the campaign is `PRODUCING_CREATIVES`.
+6. Root calls `save_channel_assets` (`channelId`) → wait G_ASSETS (Approval 2/4). Reopen with
+   `preview_channel_assets_card` (`channelId`). After Approve the channel is `PRODUCING_CREATIVES`.
 
 ## On the assets card
 
@@ -69,11 +72,11 @@ schema.
 - DO NOT generate finished images — that is `campaign-creatives-generate` after G_ASSETS
 - DO NOT leave reference finding for the image phase — every reference the generator needs is
   attached to its piece here
-- DO NOT pass raw URLs as references — only `imageKey`s from `upload_campaign_image` or Brand OS
+- DO NOT pass raw URLs as references — only `imageKey`s from `upload_channel_image` or Brand OS
 - DO NOT speak to the advertiser (unless root brief allows)
 - DO NOT invent brand claims ruled out by Brand OS
 - DO NOT return partial items — every planned piece complete on first return
-- DO NOT change an approved assets plan (e.g. at `PRODUCING_CREATIVES` or `PLANNING_MEDIA`) —
+- DO NOT change an approved assets plan (e.g. at `PRODUCING_CREATIVES` or `CONFIGURING`) —
   that needs an approved Go back card first (`campaign-workflow`)
 - ONLY produce `CampaignAssets` plan fields (see tool schema)
 

@@ -1,7 +1,7 @@
 # Asset metadata (before propose)
 
-Before `propose_creatives_review`, write `MediaAssetMetadata` for every image you send (see the
-`propose_creatives_review` schema). On G_CREATIVES approve, tili saves each image to the workspace
+Before `propose_channel_creatives`, write `MediaAssetMetadata` for every image you send (see the
+`propose_channel_creatives` schema). On G_CREATIVES approve, tili saves each image to the workspace
 media library with this metadata, so later campaigns can find it
 (`list_media_assets_for_references`).
 
@@ -16,6 +16,6 @@ media library with this metadata, so later campaigns can find it
 
 ## Workflow
 
-1. Take the approved assets plan (`get_campaign_artifacts` `assets`) and the finished images.
+1. Take the approved assets plan (`get_channel_artifacts` `artifact: "assets"`) and the finished images.
 2. Per piece: visual concept, image description, transcribed on-image text, tags, product, format.
-3. Pass it as `metadata` next to the piece's `imageKey` in `propose_creatives_review`.
+3. Pass it as `metadata` next to the piece's `imageKey` in `propose_channel_creatives`.

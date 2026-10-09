@@ -24,7 +24,7 @@ Per piece, 1–4 prioritized references (max 8), each attached as
 `visual_direction.references[] = { imageKey, note }`:
 
 - Brand OS section images: reuse their `imageKey` directly.
-- Everything else: `upload_campaign_image` (`purpose: "reference"`, public https `url`, or a file
+- Everything else: `upload_channel_image` (`purpose: "reference"`, public https `url`, or a file
   via presigned upload: `contentType` → PUT to `uploadUrl` → `imageKey` to verify).
 
 Start each note with its role, then what to take and what to ignore — the image prompt mirrors it.

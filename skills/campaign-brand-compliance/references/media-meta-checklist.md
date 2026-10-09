@@ -1,14 +1,16 @@
 # Media checklist (`phase: media`, Meta)
 
-Score a `MediaStrategy` draft (common fields + `providers.meta`) before `save_media_strategy`.
+Score a `MediaStrategy` draft (common fields + `providers.meta`) before `save_channel_config`.
 Meta doctrine lives in
-[`campaign-media-strategy/references/media-meta.md`](../../campaign-media-strategy/references/media-meta.md)
+[`channel-config/references/media-meta.md`](../../channel-config/references/media-meta.md)
 — check against it, do not restate it.
 
 ## Inputs to load
 
 - `get_brand_os`: claims rules, placements or channels Brand OS rules out, never-dos
-- `get_campaign_artifacts` for `strategy` and `assets` — both must be `approved`
+- `get_campaign_strategy` and `get_channel_artifacts` `artifact: "assets"` — both must be
+  `approved`
+- `get_campaign_status`: the channel's `plannedBudget` share and dates
 - The `draft` and `goBackReason` from the brief
 - `get_pixel_stats` when the draft retargets or optimizes for a pixel event
 
@@ -21,7 +23,8 @@ Meta doctrine lives in
 3. **`Alignment: media bidding`** — pass when bidding is `LOWEST_COST_WITHOUT_CAP` and billing is
    `IMPRESSIONS`.
 4. **`Alignment: media budget`** — pass when `budget.mode` and `budget.dailyTotal` match the Meta
-   campaign / ad-set budgets.
+   campaign / ad-set budgets, and `dailyTotal` × the channel's flight days fits its `plannedBudget`
+   share (when the flight ends).
 5. **`Alignment: media ad sets`** — pass when there is exactly one ad set per `audiences[].name`.
 6. **`Alignment: assets bindings`** — pass when every static ad set has at least one binding,
    catalog ad sets have none, and every binding points to an asset id in the approved assets plan.

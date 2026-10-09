@@ -4,9 +4,9 @@ description: >-
   Review one campaign phase before the advertiser sees it: check it against BINDING Brand OS and the
   already-approved earlier phases; return BrandCompliance (pass|fail|revise). Always load when the
   root campaign-workflow / campaign-creatives-generate agent spawns the review subagent (or runs it
-  inline): before save_campaign_strategy, save_campaign_assets, or save_media_strategy — including
+  inline): before save_campaign_strategy, save_channel_assets, or save_channel_config — including
   re-proposals after a go back — and after campaign-creative-render returns finished images, before
-  propose_creatives_review (including Creatives card correction passes). Scores only; never
+  propose_channel_creatives (including Creatives card correction passes). Scores only; never
   saves, proposes, publishes, or talks to the advertiser.
 license: proprietary
 ---
@@ -20,7 +20,7 @@ images, or talk to the advertiser.
 ## Brief (from root)
 
 - `phase`: `strategy` | `assets` | `images` | `media`
-- `campaignId`
+- `campaignId`, and `channelId` for channel phases (`assets`, `images`, `media`)
 - `strategy` / `assets` / `media`:
   - `draft`: the artifact exactly as it would be saved
   - `goBackReason`: when the draft is `needsAlignment` after a go back (the advertiser's change)
@@ -35,9 +35,10 @@ images, or talk to the advertiser.
 1. Read the brief. Missing `phase` or `campaignId`, or missing `draft` (`strategy` / `assets` /
    `media`) or `images` + `advertiserCreativeIds` (`images`) → return `fail` naming what is missing.
 2. Read the checklist for `phase` (**Resources**); load its **Inputs** (`get_brand_os` sections,
-   `get_campaign_artifacts` for earlier phases, `get_asset_generation_input` per image). Only
+   `get_campaign_strategy` and `get_channel_artifacts` for earlier phases,
+   `get_channel_asset_input` per image). Only
    `approved` artifacts are binding; ignore `draft` ones.
-3. `images` with `corrections`: `get_asset_generation_input` for each corrected id →
+3. `images` with `corrections`: `get_channel_asset_input` for each corrected id →
    `correction.note`, correction references, and `correction.baseImage` (the previous creative).
 4. Score every checklist item against Brand OS, the approved phases, and (for `images`) the pixels.
 5. Return `BrandCompliance`: `summary`, `overall`, `checks[]` (at least 3), and `revise_notes`
@@ -56,8 +57,8 @@ instructions naming the failed ids.
 - DO NOT call any `save_*` / `propose_*` / `publish_*` / `confirm_*` / `upload_*` tool
 - DO NOT talk to the advertiser
 - DO NOT let an advertiser creative block `pass` — its issues are advisory notes only
-- ONLY use read tools: `get_brand_os`, `get_campaign_status`, `get_campaign_artifacts`,
-  `get_asset_generation_input`, `get_pixel_stats`
+- ONLY use read tools: `get_brand_os`, `get_account_context`, `get_campaign_status`,
+  `get_campaign_strategy`, `get_channel_artifacts`, `get_channel_asset_input`, `get_pixel_stats`
 - Pass only when brand-safe **and** consistent with the approved phases (for `images`: every
   generated image safe to show)
 
@@ -66,22 +67,22 @@ instructions naming the failed ids.
 Input: `{ phase: "strategy", campaignId: 42, draft }`, first propose  
 Output: strategy checklist → voice / pricing / guardrails pass → `pass`
 
-Input: `{ phase: "assets", campaignId: 42, draft }`, piece 03 pushes a discount the approved
+Input: `{ phase: "assets", campaignId: 42, channelId: 7, draft }`, piece 03 pushes a discount the approved
 strategy does not offer  
 Output: `revise` — `Alignment: strategy offer` fails on piece 03; revise note: drop the discount,
 use the approved key message
 
-Input: `{ phase: "images", campaignId: 42, images: [01, 02, 04], advertiserCreativeIds: ["03"] }`,
+Input: `{ phase: "images", campaignId: 42, channelId: 7, images: [01, 02, 04], advertiserCreativeIds: ["03"] }`,
 02 shows six fingers on the hand holding the can  
 Output: `revise` — `02:visual_realism` fails; revise note: "02: regenerate the hand — five
 fingers, natural grip, keep can and framing"; 03 scored advisory only
 
-Input: `{ phase: "images", campaignId: 42, images: [02], corrections: [{ assetId: "02", note:
+Input: `{ phase: "images", campaignId: 42, channelId: 7, images: [02], corrections: [{ assetId: "02", note:
 "warmer light" }] }`, light still cool and the headline moved  
 Output: `revise` — `02:correction` fails; revise note: "02: light still cool; the headline moved —
 restore it to the top third"
 
-Input: `{ phase: "media", campaignId: 42, draft }`, a binding points to piece 05 that is not in
+Input: `{ phase: "media", campaignId: 42, channelId: 7, draft }`, a binding points to piece 05 that is not in
 the approved assets plan  
 Output: `revise` — `Alignment: assets bindings` fails; revise note: remove or rebind 05
 

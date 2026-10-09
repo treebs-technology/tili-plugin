@@ -1,7 +1,7 @@
 interface:
   display_name: 'Campaign Optimize'
-  short_description: 'Post-publish reports and lifecycle suggestions'
-  default_prompt: 'Optimize a live campaign.'
+  short_description: 'Read live performance and propose changes the advertiser approves'
+  default_prompt: 'Review how my live campaign is doing.'
 policy:
   allow_implicit_invocation: true
 

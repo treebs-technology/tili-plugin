@@ -2,13 +2,13 @@
 
 Author `MediaStrategy.providers.meta` (tili ODAX v1) from approved CampaignStrategy + common media
 draft. Also the fixer for Meta `PUBLISH_FAILED`. Payload shape: MCP tool schema for
-`save_media_strategy`. Root owns save / publish / cards.
+`save_channel_config`. Root owns save / publish / cards.
 
 ## Rules
 
-- DO NOT invent interest or geo ids — use `search_ad_interests` / `search_geo_locations`
+- DO NOT invent interest, behavior, geo or locale ids — use `search_targeting`
 - DO NOT invent catalog or product set ids — catalogs come from `get_account_context`, product
-  sets from the advertiser
+  sets from `get_catalog_health` or `manage_product_set`
 - DO NOT use pre-ODAX objectives (`LINK_CLICKS`, `CONVERSIONS`, …) — ODAX `OUTCOME_*` only
 - DO NOT set bid caps / COST_CAP / MIN_ROAS — v1 is `LOWEST_COST_WITHOUT_CAP`
 - DO NOT set `billing_event` other than `IMPRESSIONS`
@@ -46,7 +46,7 @@ Decide from the approved strategy, assets and account facts. Standard is the def
 
 | Type | Choose when (all true) | Config |
 | --- | --- | --- |
-| Catalog sales | Goal is purchases; offer is a product range, not one hero product; catalog is in `get_account_context` catalogs; the advertiser names a product set that fits the offer; `get_pixel_stats` shows ViewContent / AddToCart / Purchase firing | `campaign.catalog` + `adSets[].catalog` on every ad set |
+| Catalog sales | Goal is purchases; offer is a product range, not one hero product; catalog is in `get_account_context` catalogs and `get_catalog_health` shows products, no must-fix issues and the pixel connected; a product set fits the offer; `get_pixel_stats` shows ViewContent / AddToCart / Purchase firing | `campaign.catalog` + `adSets[].catalog` on every ad set |
 | Advantage+ sales | Goal is purchases; `get_pixel_stats` shows healthy Purchase volume; no constraint needs per-ad-set budgets (e.g. "retargeting below 25% of spend"); no strict placement or demographic limits; no catalog retargeting | `campaign.advantagePlus: true` + CBO + `advantage_audience: 1` + no `placements` |
 | Advantage+ catalog sales | Both rows above hold and every catalog ad set is broad | both configs; catalog audiences `broad` only |
 | Standard | Anything else | neither |
@@ -61,10 +61,16 @@ Decide from the approved strategy, assets and account facts. Standard is the def
 
 - `campaign.catalog { id, name }` from `get_account_context` catalogs. The campaign stays
   OUTCOME_SALES; every ad set optimizes OFFSITE_CONVERSIONS + PURCHASE.
-- `adSets[].catalog.productSet { id, name }` from the advertiser (Commerce Manager). Ask which
-  set fits the offer and what it contains so the copy matches real names and prices. No fitting
-  set → ask the advertiser to create one in Commerce Manager. Publish checks the set exists in
-  the catalog and has products.
+- `adSets[].catalog.productSet { id, name }` from `get_catalog_health` product sets. Ask the
+  advertiser which set fits the offer; `list_catalog_products` with that set shows what it holds,
+  so the copy matches real names and prices. No fitting set → propose a filter (product type,
+  brand, custom label), show its matches with `list_catalog_products` (filter), and create it with
+  `manage_product_set` only after the advertiser says yes. Publish checks the set exists in the
+  catalog and has products.
+- `get_catalog_health` must-fix issues block delivery of the affected products. Product data
+  changes go through `upsert_products` (retailer ids and current values from
+  `list_catalog_products`), only after the advertiser says yes to the exact change. Not `finished`
+  → send the same items again later (updates repeat safely); never widen the change.
 - Audience: `broad` (Meta picks people and products) or `retarget` with `events`
   (`ViewContent` / `AddToCart`), `lookbackDays` 1–180, optional `excludePurchasedDays`. Retarget only
   events `get_pixel_stats` shows firing.
@@ -91,8 +97,10 @@ Decide from the approved strategy, assets and account facts. Standard is the def
 
 1. Read strategy + root draft + account ceiling / pixel / page.
 2. Choose the campaign type (table above); choose ODAX row; one ad set per audience name;
-   resolve interests/geo. Optionally estimate reach.
-3. Custom audiences only from `list_custom_audiences`. Conversion goals → `get_pixel_stats`.
+   resolve interests/geo with `search_targeting`. Optionally `estimate_audience` with the ad
+   set's audience, placements and optimization goal.
+3. Custom audiences only from `list_audiences`. Include only `ready` ones; exclusions (e.g. recent
+   buyers) may be too small to deliver and still apply. Conversion goals → `get_pixel_stats`.
 4. EU/EEA → `campaign.dsa.beneficiary`.
 5. Hand complete `providers.meta` back to root for assemble / save.
 
@@ -100,7 +108,7 @@ Decide from the approved strategy, assets and account facts. Standard is the def
 
 Map error → path under `providers.meta`; patch targeting/goal/budget/DSA/destination; re-resolve
 stale ids; return updated Meta config for root to save (no new gate card). Root republishes with
-`publish_campaign` only after the advertiser says yes to placing it again, passing
+`retry_channel_publish` only after the advertiser says yes to placing it again, passing
 `userConfirmed: true`.
 
 | Code | Resolve with |
@@ -111,7 +119,7 @@ stale ids; return updated Meta config for root to save (no new gate card). Root 
 | `catalog_bindings_forbidden` | drop bindings to catalog ad sets |
 | `audience_binding_required` | bind at least one asset to each static ad set |
 | `catalog_unknown` | `get_account_context` → pick a listed catalog |
-| `product_set_unknown` / `product_set_empty` | ask the advertiser for a set in that catalog with products |
+| `product_set_unknown` / `product_set_empty` | `get_catalog_health` → a set in that catalog with products, or `manage_product_set` after the advertiser's yes |
 | `catalog_pixel_not_connected` | ask the advertiser to connect the pixel to the catalog in Commerce Manager |
 | `catalog_event_weak` | `get_pixel_stats` → retarget firing events, or switch to `broad` |
 | `advantage_plus_objective` | OUTCOME_SALES or drop `advantagePlus` |
