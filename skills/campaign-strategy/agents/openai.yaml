@@ -1,6 +1,6 @@
 interface:
   display_name: 'Campaign Strategy'
-  short_description: 'Draft messaging CampaignStrategy for G_STRATEGY'
+  short_description: 'Write the campaign plan — who it is for, what we say, budget and dates'
   default_prompt: 'Draft the campaign strategy.'
 policy:
   allow_implicit_invocation: true

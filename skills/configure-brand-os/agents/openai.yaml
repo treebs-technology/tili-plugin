@@ -1,6 +1,6 @@
 interface:
   display_name: 'Configure Brand OS'
-  short_description: 'Draft and propose the workspace Brand OS from official sources'
+  short_description: 'Set up your Brand OS — the brand rules every ad follows'
   default_prompt: 'Check Brand OS status and configure it for this workspace.'
 policy:
   allow_implicit_invocation: true

@@ -61,7 +61,8 @@ and researched.
    `get_campaign_performance`; choose them so the advertiser recognises the goal they gave you.
 5. Return the draft to root for the `campaign-brand-compliance` review (Brand OS + go-back
    reason). On `revise` / `fail` → apply its `revise_notes` (correction mode) and return again.
-6. Tell the advertiser in 2–4 lines what research found and what it changes, then return the draft
+6. Tell the advertiser in 2–4 plain lines what research found and what it changes (no tool names,
+   field names or marketing jargon — `references/advertiser-language.md`), then return the draft
    or call `save_campaign_strategy` when the orchestrator allows → wait G_STRATEGY. Reopen later
    with `preview_campaign_strategy_card` (`campaignId`) — do not re-propose only to show.
 
@@ -72,6 +73,10 @@ and researched.
 - DO NOT put a claim in `reason_to_believe` or `insight` that research did not surface
 - DO NOT number angles; send `supporting_messages` as `{ title, description }` in priority order
 - DO NOT dump raw data rows to the advertiser; summarise findings
+- DO NOT write card text in marketing jargon — the advertiser reads every strategy field on the
+  card: `insight`, `audience_problem`, `proposition`, angles and the rest are plain sentences a
+  business owner would say ("Parents run out of time to cook on weekdays", not "time-poor
+  millennial parents in the consideration stage"). Enum values stay as listed
 - DO NOT emit Meta `OUTCOME_*` objectives, placements, bid strategies, ABO/CBO budget mode,
   daily budgets, region/city-level geo targeting, or Graph dumps — `market`, `plannedBudget` and
   `channels[]` are business-level only
@@ -114,3 +119,4 @@ review with `goBackReason`; `save_campaign_strategy` → G_STRATEGY
 
 - `references/strategy-research.md` — alignment checklist, stop conditions, research questions
 - `references/start-campaign.md` — read before `create_campaign` or when opening a new campaign
+- `references/advertiser-language.md` — read before writing anything the advertiser reads

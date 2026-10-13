@@ -32,7 +32,8 @@ Same tools; change scope only:
 ## Workflow
 
 1. `get_brand_os` (no section) — including status questions (“configured?”, “ready?”).
-   Read **value previews** in `index` — not only filled flags. Then branch on situation state:
+   Read **value previews** in `index` — not only filled flags. Then branch on situation state
+   (report each in plain words — what is done and what is still needed, never the status values):
    - **`ready: true`** → report ready; stop unless the user asked to update.
    - **`brandStatus: pending_review`** (configured, awaiting human) →
      `preview_brand_os_card` so they can Approve or ask for changes in chat. Do not call
@@ -83,12 +84,15 @@ Same tools; change scope only:
   `references/section-images.md`
 - Do not approve Brand OS yourself; do not lecture that branding is required — configure it
 - Keep Brand OS concise and operational
+- **Plain language:** chat replies, questions, and `unresolved` items are for a business owner —
+  no tool names, statuses, field names, or marketing jargon ("We still need your logo file", not
+  "unresolved: logos[]"). See `references/advertiser-language.md`
 
 ## Examples
 
 Input: “i have configured brand OS?” / “is Brand OS ready?” + Brand OS empty  
-Output: `get_brand_os` → report `ready` / `brandStatus` / `missing`; stop unless they ask to
-configure next
+Output: `get_brand_os` → "Your Brand OS isn't set up yet. Send me your website and logo file
+and I'll draft it for you to approve." Stop unless they ask to configure next
 
 Input: “i have configured brand OS?” + `brandStatus: pending_review` (complete, awaiting approve)  
 Output: `get_brand_os` → `preview_brand_os_card` for Approve; do not confirm yourself
@@ -133,5 +137,6 @@ Output: `fonts: [{ family: "Montserrat", weights: ["700"], role: "Headlines", si
 
 ## Resources
 
+- `references/advertiser-language.md` — read before your first message to the advertiser
 - `references/logos.md` — read before writing `logos[]`
 - `references/section-images.md` — read when attaching moodboard or any section image references

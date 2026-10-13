@@ -43,7 +43,8 @@ schema.
    product; Image 2 = lighting only"), and passing that doc's self-check.
 4. Write every planned piece in one pass (copy + nested VD + prompt + references). Keep `id` stable
    for later generate / regenerate. Then write the card `heading` + `description` (required;
-   specific to the campaign, not a generic line, in the advertiser's language):
+   specific to the campaign, not a generic line, in the advertiser's language and plain words —
+   `references/advertiser-language.md`):
    - `heading` — one sentence naming what this plan is, e.g. "Four creatives, one per angle, built
      for the first warm week." Not a slogan or an ad headline.
    - `description` — one or two plain sentences: what is final in this plan (copy, prompts,
@@ -74,6 +75,8 @@ schema.
   attached to its piece here
 - DO NOT pass raw URLs as references — only `imageKey`s from `upload_channel_image` or Brand OS
 - DO NOT speak to the advertiser (unless root brief allows)
+- DO NOT put jargon or internal names in card text (heading, description, copy) — the advertiser
+  reads it; image prompts may stay technical
 - DO NOT invent brand claims ruled out by Brand OS
 - DO NOT return partial items — every planned piece complete on first return
 - DO NOT change an approved assets plan (e.g. at `PRODUCING_CREATIVES` or `CONFIGURING`) —
@@ -111,3 +114,4 @@ rendered again
 - `references/image-prompt.md` — always, before writing any `image_generation_prompt` (structure,
   reference roles, text rule, self-check)
 - `references/creative-references.md` — when gathering visual refs and writing their role notes
+- `references/advertiser-language.md` — before writing the card `heading` and `description`

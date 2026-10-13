@@ -25,7 +25,7 @@ match rates, product sets) — see Catalog readiness in `strategy-research.md`.
 ### 2. Brand OS (must-gate)
 
 1. `get_brand_os` (no section) — if `ready` is false, **stop**. Load `configure-brand-os`; tell the
-   advertiser campaign tools stay locked until Brand OS is approved; follow that skill only.
+   advertiser we can start a campaign once their Brand OS is approved; follow that skill only.
 2. When ready, load BINDING Brand OS (logos/colors/fonts + sections).
 3. When needed: lasting prefs via Brand OS `preferences` / `save_account_preferences` (always
    available; not Brand-OS-locked), one kebab-case key per topic (e.g. `budget-style`,
@@ -40,7 +40,8 @@ create a campaign until it passes.
 
 1. Before `create_campaign`: `list_campaigns` for open work. If one matches this goal, **stop and ask**:
 
-   > You already have campaign **{name}** (id {id}), status **{status}** — {stage}.
+   > You already have a campaign called **{name}** — {where it stands, in plain words, e.g. "the
+   > ad images are waiting for your approval"}.
    > 1. Continue that campaign
    > 2. Create a new campaign
 

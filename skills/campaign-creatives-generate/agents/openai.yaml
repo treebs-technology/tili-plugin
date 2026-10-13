@@ -1,6 +1,6 @@
 interface:
   display_name: 'Campaign Creatives'
-  short_description: 'Generate, review, and archive finished creatives after G_ASSETS'
+  short_description: 'Create the ad images for your approval'
   default_prompt: 'Generate the campaign creatives.'
 policy:
   allow_implicit_invocation: true

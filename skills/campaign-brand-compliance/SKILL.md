@@ -4,8 +4,9 @@ description: >-
   Review one campaign phase before the advertiser sees it: check it against BINDING Brand OS and the
   already-approved earlier phases; return BrandCompliance (pass|fail|revise). Always load when the
   root campaign-workflow / campaign-creatives-generate agent spawns the review subagent (or runs it
-  inline): before save_campaign_strategy, save_channel_assets, or save_channel_config — including
-  re-proposals after a go back — and after campaign-creative-render returns finished images, before
+  inline): before save_campaign_strategy, save_channel_assets, save_channel_config or
+  update_channel_entity — including re-proposals after a go back, fixes after a failed publish and
+  changes to a live channel — and after campaign-creative-render returns finished images, before
   propose_channel_creatives (including Creatives card correction passes). Scores only; never
   saves, proposes, publishes, or talks to the advertiser.
 license: proprietary
@@ -24,6 +25,11 @@ images, or talk to the advertiser.
 - `strategy` / `assets` / `media`:
   - `draft`: the artifact exactly as it would be saved
   - `goBackReason`: when the draft is `needsAlignment` after a go back (the advertiser's change)
+- `media` only:
+  - `publishFix: { lastPublishError, previousConfig }`: a fix after a failed publish — Meta's error
+    and the config that failed
+  - `change: { request, previousConfig }`: a change to a live channel — what the advertiser asked
+    for and the config now live
 - `images`:
   - `images: [{ assetId, imageKey, imageUrl }]`: the new renders
   - `advertiserCreativeIds`: pieces carrying the advertiser's own creative (advisory only)

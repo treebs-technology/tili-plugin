@@ -1,6 +1,6 @@
 interface:
   display_name: 'Campaign Optimize'
-  short_description: 'Read live performance and propose changes the advertiser approves'
+  short_description: 'See how your ads are doing and approve suggested changes'
   default_prompt: 'Review how my live campaign is doing.'
 policy:
   allow_implicit_invocation: true

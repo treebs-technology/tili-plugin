@@ -43,10 +43,11 @@ look for new references.
    the first proposal, each advertiser creative with its existing `imageKey` + `metadata` (leave
    reused images out — they are already in the set with their metadata) plus the card `heading` +
    `description` you write for this set
-   (advertiser's language; heading is one sentence about this set, e.g. "Four ads for the first
-   warm week, ready for your eye."; description: what to check, changes go in the correction block
-   per image, approving locks the set (Approval 3/4) before the Meta setup; name any advisory issue on
-   their own creatives). **Every plan piece
+   (advertiser's language, plain words — `references/advertiser-language.md`; heading is one
+   sentence about this set, e.g. "Four ads for the first warm week, ready for your eye.";
+   description: what to check, changes go in the correction block per image, approving locks the
+   set before we set up who sees the ads and the budget; name any issue you see on their own
+   images). **Every plan piece
    must have an image** — a partial set is refused and nothing is saved. The card is the hard gate
    G_CREATIVES (`AWAITING_CREATIVES`); wait for it. Reopen with `preview_channel_creatives_card`
    (`channelId`). Card corrections → mode B.
@@ -121,8 +122,8 @@ no product cutout is needed.
 Parallel render → brand-compliance images review → re-render failed → show. Ask:
 
 > Here are all the ads. To change one, press **Request a correction** under it on the card and
-> write the change there; or **approve all** to lock the set, then they are saved to your media
-> library and I plan the Meta setup (budget, audiences).
+> write the change there; or **approve all** to lock the set. They are then saved to your media
+> library, and I set up who sees the ads and the daily budget.
 
 ### B. Correction pass (Creatives card)
 
@@ -207,3 +208,5 @@ Output: no render → redirect message (write it in 02's correction block on the
 - `references/creative-review.md` — shared images checklist (same file as brand-compliance); read
   before briefing the images review, or run it inline when subagents are unavailable
 - `references/asset-metadata.md` — before `propose_channel_creatives`
+- `references/advertiser-language.md` — before writing the card `heading` + `description` or
+  talking to the advertiser

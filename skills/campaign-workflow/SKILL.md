@@ -62,18 +62,23 @@ phase skill.
       (`propose_channel_creatives`, every piece) → G_CREATIVES
    5. After G_CREATIVES (`CONFIGURING`; approved images are already in the media library):
       `channel-config` → compliance review → G_CONFIG (approve places the channel on Meta)
-   6. Live (`LIVE`) → `campaign-optimize`
+   6. Live (`LIVE`) → `campaign-optimize`: first set up the campaign's recurring report task
+      (`get_reporting_schedule`, `references/recurring-report.md` there), then read performance
 5. **Compliance review before the advertiser sees each phase:** strategy, assets, and config
    before every propose (first propose and every re-propose, including after a go back); images
    after render, before `propose_channel_creatives` (`campaign-creatives-generate` owns that brief):
    - Load the `campaign-brand-compliance` skill and run its review with `phase`, `campaignId`
      (and `channelId` for channel phases), the draft exactly as it would be saved, and
-     `goBackReason` when the draft is `needsAlignment`.
+     `goBackReason` when the draft is `needsAlignment`, `publishFix` for a fix after a failed
+     publish, or `change` for a change to a live channel.
    - `pass` → call the phase's `save_*`.
    - `revise` / `fail` → hand `revise_notes` to the phase skill, amend, review again. Max 2 revise
-     rounds; still not `pass` → propose anyway and tell the advertiser the open issues in chat.
-   - Not on `PUBLISH_FAILED` fix saves (no new card).
-6. **Orient the advertiser** before every wait (Now / Next / I need from you).
+     rounds; still not `pass` → propose anyway and tell the advertiser the open issues in chat,
+     in plain words.
+   - Fixes after `PUBLISH_FAILED` and live changes (`update_channel_entity`) go through the same
+     review: each opens a card.
+6. **Orient the advertiser** before every wait (Now / Next / I need from you), in plain words
+   (`references/advertiser-language.md`).
 
 ### Reopen gate cards (no re-propose)
 
@@ -88,8 +93,8 @@ phase skill.
 ### Go back to an earlier phase
 
 Approved = binding, so changing an approved strategy, assets plan, or creatives needs the
-advertiser's explicit OK on a **Go back** card. Only before the channel is placed (not
-`PUBLISH_FAILED` / `LIVE`).
+advertiser's explicit OK on a **Go back** card. Only before the channel is live (not `LIVE`); a
+`PUBLISH_FAILED` channel can go back, and the next publish brings what is paused on Meta in line.
 
 1. The advertiser asks to change an approved phase → say what going back means (that phase
    reopens; later phases become drafts to re-approve), then:
@@ -139,6 +144,11 @@ advertiser's explicit OK on a **Go back** card. Only before the channel is place
 - **Language:** write all campaign content (strategy, assets copy, config text) and your chat
   replies in the language the user writes in chat — not the language of the website, sources, or
   Brand OS. Enum values stay as listed. Applies to every phase skill
+- **Plain language:** the advertiser is not a marketer or a developer. Everything they read (chat,
+  questions, card text, reasons) uses everyday words — no tool names, ids, statuses, field names,
+  error codes, or ad jargon (ROAS, CTR, ad set, retargeting, pixel…). Read
+  `references/advertiser-language.md` before your first message to them. Applies to every phase
+  skill
 
 ## Keep the advertiser oriented
 
@@ -148,14 +158,15 @@ advertiser's explicit OK on a **Go back** card. Only before the channel is place
 
 | Moment | Say |
 | --- | --- |
-| Starting strategy | Drafting messaging and the budget split for approval → then assets plan |
-| After strategy proposed | Approve strategy card → then plan creatives in words |
-| After assets proposed | Add references on the card if you like, approve → then generate images |
-| Generating / Creatives card | Creating ads + Creatives card → correction block per image, or approve all → then Meta setup |
-| Before config | Approved creatives saved to your media library → daily budget / audiences next |
-| Go back proposed | Approve the Go back card → I update that step, then re-check later steps with you |
-| After go back | Updating {phase} → then re-checking {later phases} in order, each back for approval |
-| Live | How it tracks against your target; changes come to you as a card to approve |
+| Starting strategy | Writing the campaign plan — who it's for, what we say, budget and dates — for you to approve → then the ad texts and image ideas |
+| After strategy proposed | Approve the plan on the card or tell me what to change → then I write each ad's text and describe its image |
+| After assets proposed | Add example images on the card if you like, then approve → I create the ad images |
+| Generating / Creatives card | Creating the ad images → fix any image on the card, or approve them all → then I set up who sees the ads and the daily budget |
+| Before config | Your approved images are saved in your media library → next, who sees the ads and the daily budget |
+| Go back proposed | Approve the card to reopen that step → I change it, then check the later steps with you |
+| After go back | Changing {step} → then checking {later steps} one by one, each back to you for approval |
+| Placed | Your ads are on Meta from {start} → a short update every morning from {first day}; any change comes to you as a card to approve |
+| Live | How the ads are doing against your goal; any change comes to you as a card to approve |
 
 ## Status cheat sheet
 
@@ -166,7 +177,7 @@ Campaign (`campaignStatus`):
 | `DRAFTING` | `campaign-strategy` (incl. start; amend a `needsAlignment` draft after go back) → G_STRATEGY |
 | `AWAITING_STRATEGY` | wait G_STRATEGY; rework via `campaign-strategy` |
 | `ACTIVE` | work on its channels (below) |
-| `CANCELLED` | nothing |
+| `CANCELLED` | nothing; delete its report task if one exists |
 
 Channel (`channels[].status`):
 
@@ -178,8 +189,8 @@ Channel (`channels[].status`):
 | `AWAITING_CREATIVES` | wait G_CREATIVES; card corrections → regenerate only those → propose again |
 | `CONFIGURING` | `channel-config` |
 | `AWAITING_CONFIG` | wait G_CONFIG |
-| `PUBLISH_FAILED` | `channel-config` (`references/media-meta.md`) fix → `retry_channel_publish` after the advertiser says yes |
-| `LIVE` | `campaign-optimize` |
+| `PUBLISH_FAILED` | `channel-config`: read `lastPublishError` → fix on the config card (`update_channel_entity`); rate limit / auth → `retry_channel_publish` after the advertiser says yes |
+| `LIVE` | `campaign-optimize` (recurring report task set up) |
 
 Happy path: campaign `DRAFTING` → `AWAITING_STRATEGY` → `ACTIVE`; Meta channel `PLANNED` →
 `PRODUCING_ASSETS` → `AWAITING_ASSETS` → `PRODUCING_CREATIVES` → `AWAITING_CREATIVES` →
@@ -215,11 +226,18 @@ Output: `propose_channel_go_back` (`toPhase: "creatives"`, reason) → approved
 
 - Account preferences: follow `campaign-strategy` (`references/start-campaign.md`) / Brand OS —
   never invent
-- Change to an approved phase after placement (`LIVE` / `PUBLISH_FAILED`) → no go back; use
-  `campaign-optimize` or the `PUBLISH_FAILED` fix path
+- Change to an approved phase once `LIVE` → no go back; config changes go on a live change card
+  (`update_channel_entity`, `campaign-optimize`)
+- Change after `PUBLISH_FAILED` → a config fix on the config card (`channel-config`), or a go back
+  when creatives, assets or the strategy must change
 - Change fits the current phase (e.g. a config tweak at `AWAITING_CONFIG`) → no go back; amend and
   propose again
 - Go back card says the campaign moved on → `get_campaign_status`, then propose again if still
   wanted
 - `create_campaign` refuses because the workspace and ad-account currencies differ → tell the
   advertiser to align them in workspace settings; do not work around it
+
+## Resources
+
+- `references/advertiser-language.md` — read before your first message to the advertiser and
+  before writing any text they will see

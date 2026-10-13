@@ -1,6 +1,6 @@
 interface:
   display_name: 'Campaign Assets Plan'
-  short_description: 'Produce the CampaignAssets plan (copy, visual direction, image prompts + references) for G_ASSETS'
+  short_description: 'Write the text and image ideas for each ad, for your approval'
   default_prompt: 'Draft the campaign assets plan.'
 policy:
   allow_implicit_invocation: true

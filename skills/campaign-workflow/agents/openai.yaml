@@ -1,6 +1,6 @@
 interface:
   display_name: 'Campaign Workflow'
-  short_description: 'Order Strategy → Assets Plan → Creatives → Media Plan → optimize'
+  short_description: 'Run a campaign step by step: plan, ads, images, setup, results'
   default_prompt: 'Run the campaign workflow for this workspace.'
 policy:
   allow_implicit_invocation: true

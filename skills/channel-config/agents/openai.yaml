@@ -1,6 +1,6 @@
 interface:
   display_name: 'Channel Config'
-  short_description: 'Draft the Meta channel config with providers.meta for G_CONFIG'
+  short_description: 'Set up who sees your ads, where, and the daily budget'
   default_prompt: 'Draft the Meta channel config.'
 policy:
   allow_implicit_invocation: true
