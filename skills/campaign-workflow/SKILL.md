@@ -117,6 +117,10 @@ advertiser's explicit OK on a **Go back** card. Only before the channel is live 
 
 ## Rules
 
+- Any tool returns `constraint: meta_connection_required` → stop all work. Tell the advertiser that
+  a workspace owner must log in with Meta Business Login again at `reconnectUrl` (name any
+  `missingPermissions`). DO NOT continue with generic advice, other tools, or retries until they say
+  it is done
 - DO NOT invent strategy, assets, or config when a phase skill owns that step
 - DO NOT write Meta Graph JSON for the advertiser — `providers.meta` stays off card copy
 - DO NOT skip human gates on strategy, assets plan, creatives, or config. Config is refused until
